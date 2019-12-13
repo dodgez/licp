@@ -7,6 +7,7 @@
 #include "number.h"
 #include "id.h"
 #include "expression.h"
+#include "eval.h"
 
 void repl(void);
 

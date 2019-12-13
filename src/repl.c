@@ -1,16 +1,5 @@
 #include "repl.h"
 
-void printTree(Node* node, int tab_size) {
-  for (int i = 0; i < tab_size; ++i) {
-    printf(" ");
-  }
-  printf("Type '%s', token '%s', and %d children\n", node->type, node->token, node->children_size);
-
-  for (int i = 0; i < node->children_size; ++i) {
-    printTree(node->children[i], tab_size + 2);
-  }
-}
-
 void repl(void) {
   Node node;
   char* input = NULL;
@@ -21,7 +10,12 @@ void repl(void) {
     if (parseExpression(getStreamFromString(input), &node) != 0) {
       printf(error_message);
     } else {
-      printTree(&node, 0);
+      Value result;
+      eval(&node, &result);
+
+      if (result.type == NUMBER_VALUE) {
+        printf("%d\n", ((int*)result.data)[0]);
+      }
     }
   }
 }
