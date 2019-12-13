@@ -11,7 +11,7 @@ int parseNumber(Stream* stream, Node* node) {
     i += 1;
   }
 
-  node->type = "number";
+  node->type = NUMBER_NODE;
   node->token = (char*)malloc(sizeof(char) * i);
   node->children = NULL;
   node->children_size = 0;

@@ -23,7 +23,7 @@ int parseQuotedExpression(Stream* stream, Node* node) {
   if (parseExpression(stream, node) != 0) {
     return 1;
   }
-  node->type = "quoted_expression";
+  node->type = QUOTED_EXPRESSION_NODE;
 
   return 0;
 }

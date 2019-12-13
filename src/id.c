@@ -11,7 +11,7 @@ int parseId(Stream* stream, Node* node) {
     i += 1;
   }
 
-  node->type = "id";
+  node->type = ID_NODE;
   node->token = (char*)malloc(sizeof(char) * i);
   node->children = NULL;
   node->children_size = 0;

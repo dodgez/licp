@@ -25,7 +25,7 @@ BOOL isExpression(Stream* stream) {
 }
 
 int parseExpression(Stream* stream, Node* node) {
-  node->type = "expression";
+  node->type = EXPRESSION_NODE;
   node->token = NULL;
   node->children_size = 0;
   int max_length = 10;
