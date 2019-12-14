@@ -13,7 +13,8 @@ Node* parseId(Stream* stream) {
 
   Node* node = (Node*)malloc(sizeof(Node));
   node->type = ID_NODE;
-  node->token = (char*)malloc(sizeof(char) * i);
+  node->token = (char*)malloc(sizeof(char) * (i + 1));
+  memset(node->token, 0, sizeof(char) * (i + 1));
   node->children = NULL;
   node->children_size = 0;
   strncpy(node->token, stream->stream + sizeof(char) * stream->i, i-stream->i);
