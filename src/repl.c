@@ -12,9 +12,8 @@ void repl(void) {
     } else {
       Value result;
       eval(&node, &result);
-
       if (result.type == NUMBER_VALUE) {
-        printf("%d\n", ((int*)result.data)[0]);
+        printf("%g\n", ((double*)result.data)[0]);
       }
     }
   }

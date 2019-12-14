@@ -3,7 +3,7 @@ BIN_DIR=./bin
 TARGET=$(BIN_DIR)/main.out
 
 CC=gcc
-CFLAGS=-o $(TARGET) -I./headers
+CFLAGS=-o $(TARGET) -I./headers -lm
 
 .PHONY: all
 all: $(TARGET)
