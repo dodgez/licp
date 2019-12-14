@@ -14,6 +14,6 @@ BOOL isLParen(Stream* stream);
 BOOL isRParen(Stream* stream);
 
 BOOL isExpression(Stream* stream);
-int parseExpression(Stream* stream, Node* node);
+Node* parseExpression(Stream* stream);
 
 #endif

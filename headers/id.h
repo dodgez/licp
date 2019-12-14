@@ -5,6 +5,6 @@
 #include "stream.h"
 
 BOOL isId(Stream* stream);
-int parseId(Stream* stream, Node* node);
+Node* parseId(Stream* stream);
 
 #endif

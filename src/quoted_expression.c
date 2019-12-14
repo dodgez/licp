@@ -8,22 +8,23 @@ BOOL isQuotedExpression(Stream* stream) {
   return isQuote(stream);
 }
 
-int parseQuotedExpression(Stream* stream, Node* node) {
+Node* parseQuotedExpression(Stream* stream) {
   if (!isQuote(stream)) {
     throwError("quoted_expression", "'", stream);
-    return 1;
+    return NULL;
   }
   advanceStream(stream);
 
   if (!isExpression(stream)) {
     throwError("quoted_expression", "expression", stream);
-    return 1;
+    return NULL;
   }
 
-  if (parseExpression(stream, node) != 0) {
-    return 1;
+  Node* node = parseExpression(stream);
+  if (node == NULL) {
+    return NULL;
   }
   node->type = QUOTED_EXPRESSION_NODE;
 
-  return 0;
+  return node;
 }

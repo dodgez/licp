@@ -9,6 +9,6 @@
 BOOL isQuote(Stream* stream);
 
 BOOL isQuotedExpression(Stream* stream);
-int parseQuotedExpression(Stream* stream, Node* node);
+Node* parseQuotedExpression(Stream* stream);
 
 #endif

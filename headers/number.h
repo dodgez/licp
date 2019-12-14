@@ -5,6 +5,6 @@
 #include "stream.h"
 
 BOOL isNumber(Stream* stream);
-int parseNumber(Stream* stream, Node* node);
+Node* parseNumber(Stream* stream);
 
 #endif

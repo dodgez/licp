@@ -1,31 +1,21 @@
 #include "eval.h"
 
-int getNumberFromValue(Value* value, double* ret) {
-  if (value->type != NUMBER_VALUE) {
-    printf("Error: expected numeric value but got %d\n", value->type);
-    return 1;
-  }
-
-  ret[0] = *((double*)value->data);
-  return 0;
-}
-
-int getValueFromNode(Node* node, Value* value) {
+Value* getValueFromNode(Node* node) {
+  Value* value = (Value*)malloc(sizeof(Value));
   if (node->type == NUMBER_NODE) {
     value->type = NUMBER_VALUE;
     value->data = malloc(sizeof(double));
-
     ((double*)value->data)[0] = atof(node->token);
   } else if (node->type == EXPRESSION_NODE) {
-    if (eval(node, value) != 0) {
-      return 1;
+    value = eval(node);
+    if (value == NULL) {
+      return NULL;
     }
   } else {
     printf("Error: node type %d not supported\n", value->type);
-    return 1;
+    return NULL;
   }
-
-  return 0;
+  return value;
 }
 
 int expectNArguments(Node* node, int n) {
@@ -37,119 +27,85 @@ int expectNArguments(Node* node, int n) {
   return 0;
 }
 
-int eval(Node* node, Value* result) {
-  if (node->type != EXPRESSION_NODE) {
-    printf("Error: expected 'expression' but got '%s'\n", node->type);
-    return 1;
+void addVariable(Var* variable) {
+  if (variable_count >= allocated_variables) {
+    allocated_variables *= 2;
+    variables = (Var*)realloc(variables, sizeof(Var) * allocated_variables);
   }
 
+  variables[variable_count] = *variable;
+  variable_count += 1;
+}
+
+Var* getVariable(char* name) {
+  Var* result = (Var*)malloc(sizeof(Var));
+  for (int i = 0; i < variable_count; ++i) {
+    if (strcmp(variables[i].name, name) == 0) {
+      result->name = variables[i].name;
+      result->data = variables[i].data;
+      return result;
+    }
+  }
+  return NULL;
+}
+
+Value* eval(Node* node) {
+  Value* result = (Value*)malloc(sizeof(Value));
+  if (node->type != EXPRESSION_NODE) {
+    printf("Error: expected 'expression' but got '%s'\n", node->type);
+    return NULL;
+  }
   if (node->children_size == 0) {
     printf("Error: expected expression to have at least 1 argument\n");
-    return 1;
+    return NULL;
   }
   
   Node* function = node->children[0];
-
   if (function->type != ID_NODE) {
     printf("Error: invalid function id '%s'\n", function->token);
-    return 1;
+    return NULL;
   }
 
   char* function_name = function->token;
   if (strcmp(function_name, "add") == 0) {
     if (expectNArguments(node, 3) != 0) {
-      return 1;
+      return NULL;
     }
-
-    Value value1;
-    Value value2;
-
-    if (getValueFromNode(node->children[1], &value1) != 0) {
-      return 1;
-    }
-    if (getValueFromNode(node->children[2], &value2) != 0) {
-      return 1;
+    Value* value1 = getValueFromNode(node->children[1]);
+    Value* value2 = getValueFromNode(node->children[2]);
+    if (value1 == NULL || value2 == NULL) {
+      return NULL;
     }
 
     result->type = NUMBER_VALUE;
     result->data = malloc(sizeof(double));
-    ((double*)result->data)[0] = ((double*)value1.data)[0] + ((double*)value2.data)[0];
-  } else if (strcmp(function_name, "sub") == 0) {
+    ((double*)result->data)[0] = ((double*)value1->data)[0] + ((double*)value2->data)[0];
+  } else if (strcmp(function_name, "setq") == 0) {
     if (expectNArguments(node, 3) != 0) {
-      return 1;
+      return NULL;
     }
-
-    Value value1;
-    Value value2;
-
-    if (getValueFromNode(node->children[1], &value1) != 0) {
-      return 1;
+    if (node->children[1]->type != ID_NODE) {
+      printf("Error: expected identifier but got %d\n", node->children[1]->type);
+      return NULL;
     }
-    if (getValueFromNode(node->children[2], &value2) != 0) {
-      return 1;
+    Var* variable = getVariable(node->children[1]->token);
+    Value* value = getValueFromNode(node->children[2]);
+    if (value == NULL) {
+      return NULL;
     }
-
-    result->type = NUMBER_VALUE;
-    result->data = malloc(sizeof(double));
-    ((double*)result->data)[0] = ((double*)value1.data)[0] - ((double*)value2.data)[0];
-  } else if (strcmp(function_name, "mul") == 0) {
-    if (expectNArguments(node, 3) != 0) {
-      return 1;
+    if (variable == NULL) {
+      variable = (Var*)malloc(sizeof(Var));
+      variable->name = node->children[1]->token;
+      variable->data = value;
+      addVariable(variable);
+    } else {
+      variable->data = value;
     }
-
-    Value value1;
-    Value value2;
-
-    if (getValueFromNode(node->children[1], &value1) != 0) {
-      return 1;
-    }
-    if (getValueFromNode(node->children[2], &value2) != 0) {
-      return 1;
-    }
-
-    result->type = NUMBER_VALUE;
-    result->data = malloc(sizeof(double));
-    ((double*)result->data)[0] = ((double*)value1.data)[0] * ((double*)value2.data)[0];
-  } else if (strcmp(function_name, "div") == 0) {
-    if (expectNArguments(node, 3) != 0) {
-      return 1;
-    }
-
-    Value value1;
-    Value value2;
-
-    if (getValueFromNode(node->children[1], &value1) != 0) {
-      return 1;
-    }
-    if (getValueFromNode(node->children[2], &value2) != 0) {
-      return 1;
-    }
-
-    result->type = NUMBER_VALUE;
-    result->data = malloc(sizeof(double));
-    ((double*)result->data)[0] = ((double*)value1.data)[0] / ((double*)value2.data)[0];
-  } else if (strcmp(function_name, "pow") == 0) {
-    if (expectNArguments(node, 3) != 0) {
-      return 1;
-    }
-
-    Value value1;
-    Value value2;
-
-    if (getValueFromNode(node->children[1], &value1) != 0) {
-      return 1;
-    }
-    if (getValueFromNode(node->children[2], &value2) != 0) {
-      return 1;
-    }
-
-    result->type = NUMBER_VALUE;
-    result->data = malloc(sizeof(double));
-    ((double*)result->data)[0] = pow(((double*)value1.data)[0], ((double*)value2.data)[0]);
+    result = variable->data;
   } else {
     printf("Error: unknown function '%s'\n", function_name);
-    return 1;
+    return NULL;
   }
 
-  return 0;
+  return result;
 }

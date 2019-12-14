@@ -10,6 +10,15 @@ typedef struct _Value {
   void* data;
 } Value;
 
-int eval(Node* node, Value* result);
+typedef struct _Var {
+  char* name;
+  Value* data;
+} Var;
+
+Var* variables;
+int variable_count;
+int allocated_variables;
+
+Value* eval(Node* node);
 
 #endif

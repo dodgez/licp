@@ -24,7 +24,8 @@ BOOL isExpression(Stream* stream) {
   return isLParen(stream);
 }
 
-int parseExpression(Stream* stream, Node* node) {
+Node* parseExpression(Stream* stream) {
+  Node* node = (Node*)malloc(sizeof(Node));
   node->type = EXPRESSION_NODE;
   node->token = NULL;
   node->children_size = 0;
@@ -34,7 +35,7 @@ int parseExpression(Stream* stream, Node* node) {
 
   if (!isLParen(stream)) {
     throwError("expression", "(", stream);
-    return 1;
+    return NULL;
   }
   advanceStream(stream);
 
@@ -42,26 +43,23 @@ int parseExpression(Stream* stream, Node* node) {
   while (!isRParen(stream)) {
     result = 1;
     if (isNumber(stream)) {
-      node->children[node->children_size] = (Node*)malloc(sizeof(Node));
-      result = parseNumber(stream, node->children[node->children_size]);
+      node->children[node->children_size] = parseNumber(stream);
     } else if (isId(stream)) {
-      node->children[node->children_size] = (Node*)malloc(sizeof(Node));
-      result = parseId(stream, node->children[node->children_size]);
+      node->children[node->children_size] = parseId(stream);
     } else if (isQuotedExpression(stream)) {
-      node->children[node->children_size] = (Node*)malloc(sizeof(Node));
-      result = parseQuotedExpression(stream, node->children[node->children_size]);
+      node->children[node->children_size] = parseQuotedExpression(stream);
     } else if (isExpression(stream)) {
-      node->children[node->children_size] = (Node*)malloc(sizeof(Node));
-      result = parseExpression(stream, node->children[node->children_size]);
+      node->children[node->children_size] = parseExpression(stream);
     } else if (isWhitespace(getStreamChar(stream))) {
       advanceStream(stream);
       continue;
     } else {
       throwError("expression", "number", stream);
+      return NULL;
     }
 
-    if (result != 0) {
-      return 1;
+    if (node->children[node->children_size] == NULL) {
+      return NULL;
     }
 
     node->children_size += 1;
@@ -74,9 +72,9 @@ int parseExpression(Stream* stream, Node* node) {
 
   if (!isRParen(stream)) {
     throwError("expression", ")", stream);
-    return 1;
+    return NULL;
   }
   advanceStream(stream);
 
-  return 0;
+  return node;
 }
