@@ -39,9 +39,7 @@ Node* parseExpression(Stream* stream) {
   }
   advanceStream(stream);
 
-  int result;
   while (!isRParen(stream)) {
-    result = 1;
     if (isNumber(stream)) {
       node->children[node->children_size] = parseNumber(stream);
     } else if (isId(stream)) {
