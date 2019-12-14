@@ -42,16 +42,16 @@ int parseExpression(Stream* stream, Node* node) {
   while (!isRParen(stream)) {
     result = 1;
     if (isNumber(stream)) {
-      node->children[node->children_size] = (Node*)malloc(sizeof(Node*));
+      node->children[node->children_size] = (Node*)malloc(sizeof(Node));
       result = parseNumber(stream, node->children[node->children_size]);
     } else if (isId(stream)) {
-      node->children[node->children_size] = (Node*)malloc(sizeof(Node*));
+      node->children[node->children_size] = (Node*)malloc(sizeof(Node));
       result = parseId(stream, node->children[node->children_size]);
     } else if (isQuotedExpression(stream)) {
-      node->children[node->children_size] = (Node*)malloc(sizeof(Node*));
+      node->children[node->children_size] = (Node*)malloc(sizeof(Node));
       result = parseQuotedExpression(stream, node->children[node->children_size]);
     } else if (isExpression(stream)) {
-      node->children[node->children_size] = (Node*)malloc(sizeof(Node*));
+      node->children[node->children_size] = (Node*)malloc(sizeof(Node));
       result = parseExpression(stream, node->children[node->children_size]);
     } else if (isWhitespace(getStreamChar(stream))) {
       advanceStream(stream);
