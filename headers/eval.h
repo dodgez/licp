@@ -19,6 +19,8 @@ Var* variables;
 int variable_count;
 int allocated_variables;
 
+void addVariable(Var* variable);
+Var* getVariable(char* name);
 Value* eval(Node* node);
 
 #endif

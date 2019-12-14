@@ -6,13 +6,20 @@ Value* getValueFromNode(Node* node) {
     value->type = NUMBER_VALUE;
     value->data = malloc(sizeof(double));
     ((double*)value->data)[0] = atof(node->token);
+  } else if (node->type == ID_NODE) {
+    Var* variable = getVariable(node->token);
+    if (variable == NULL) {
+      printf("Error: variable '%s' not defined\n", node->token);
+      return NULL;
+    }
+    value = variable->data;
   } else if (node->type == EXPRESSION_NODE) {
     value = eval(node);
     if (value == NULL) {
       return NULL;
     }
   } else {
-    printf("Error: node type %d not supported\n", value->type);
+    printf("Error: node type %d not supported\n", node->type);
     return NULL;
   }
   return value;
@@ -38,12 +45,9 @@ void addVariable(Var* variable) {
 }
 
 Var* getVariable(char* name) {
-  Var* result = (Var*)malloc(sizeof(Var));
   for (int i = 0; i < variable_count; ++i) {
     if (strcmp(variables[i].name, name) == 0) {
-      result->name = variables[i].name;
-      result->data = variables[i].data;
-      return result;
+      return &variables[i];
     }
   }
   return NULL;
