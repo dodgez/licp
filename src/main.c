@@ -15,6 +15,7 @@ int main(int argc, char** argv) {
       file = fopen(argv[i], "r");
       if (file == NULL) {
         printf("Error: could not open file '%s'\n", argv[i]);
+        continue;
       }
 
       while ((read = getline(&line, &length, file)) != -1) {
