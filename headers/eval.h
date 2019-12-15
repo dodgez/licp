@@ -10,6 +10,8 @@ typedef struct Variable {
 } Variable;
 
 int expectNumberNode(Node* node);
+int expectIdNode(Node* node);
+int expectExpressionNode(Node* node);
 
 int expectNArguments(Node* node, int n);
 int expectExactlyNArguments(Node* node, int n);
