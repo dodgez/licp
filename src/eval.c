@@ -108,12 +108,7 @@ Node* evalExpression(Node* node) {
     result->children = NULL;
     result->children_size = 0;
   } else if (strcmp(function_name, "setq") == 0) {
-    if (expectExactlyNArguments(node, 3) != 0) {
-      return NULL;
-    }
-    
-    if (node->children[1]->type != ID_NODE) {
-      printf("Error: expected 'id' but got type %d\n", node->children[1]->type);
+    if (expectExactlyNArguments(node, 3) != 0 || expectIdNode(node->children[1]) != 0) {
       return NULL;
     }
 
