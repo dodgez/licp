@@ -2,25 +2,26 @@
 #define eval_h
 
 #include "common.h"
+#include "eval.h"
 
-#define NUMBER_VALUE 0
-
-typedef struct _Value {
-  int type;
-  void* data;
-} Value;
-
-typedef struct _Var {
+typedef struct Variable {
   char* name;
-  Value* data;
-} Var;
+  Node* value;
+} Variable;
 
-Var* variables;
+int expectNumberNode(Node* node);
+
+int expectNArguments(Node* node, int n);
+int expectExactlyNArguments(Node* node, int n);
+
+Node* getVariable(char* id);
+void setVariable(char* id, Node* value);
+
+Node* eval(Node* node);
+Node* evalExpression(Node* node);
+
+Variable* variables;
 int variable_count;
-int allocated_variables;
-
-void addVariable(Var* variable);
-Var* getVariable(char* name);
-Value* eval(Node* node);
+int max_variables;
 
 #endif

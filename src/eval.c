@@ -1,28 +1,25 @@
 #include "eval.h"
 
-Value* getValueFromNode(Node* node) {
-  Value* value = (Value*)malloc(sizeof(Value));
-  if (node->type == NUMBER_NODE) {
-    value->type = NUMBER_VALUE;
-    value->data = malloc(sizeof(double));
-    ((double*)value->data)[0] = atof(node->token);
-  } else if (node->type == ID_NODE) {
-    Var* variable = getVariable(node->token);
-    if (variable == NULL) {
-      printf("Error: variable '%s' not defined\n", node->token);
-      return NULL;
-    }
-    value = variable->data;
-  } else if (node->type == EXPRESSION_NODE) {
-    value = eval(node);
-    if (value == NULL) {
-      return NULL;
-    }
-  } else {
-    printf("Error: node type %d not supported\n", node->type);
-    return NULL;
+int expectNumberNode(Node* node) {
+  if (node->type != NUMBER_NODE) {
+    printf("Error: expected type 'number' but got type '%d'\n", node->type);
+    return 1;
   }
-  return value;
+  return 0;
+}
+int expectIdNode(Node* node) {
+  if (node->type != ID_NODE) {
+    printf("Error: expected type 'id' but got type '%d'\n", node->type);
+    return 1;
+  }
+  return 0;
+}
+int expectExpressionNode(Node* node) {
+  if (node->type != EXPRESSION_NODE) {
+    printf("Error: expected type 'expression' but got type '%d'\n", node->type);
+    return 1;
+  }
+  return 0;
 }
 
 int expectNArguments(Node* node, int n) {
@@ -30,82 +27,101 @@ int expectNArguments(Node* node, int n) {
     printf("Error: expected function to have at least %d arguments but got %d\n", n, node->children_size);
     return 1;
   }
-
+  return 0;
+}
+int expectExactlyNArguments(Node* node, int n) {
+  if (node->children_size != n) {
+    printf("Error: expected function to have exactly %d arguments but got %d\n", n, node->children_size);
+    return 1;
+  }
   return 0;
 }
 
-void addVariable(Var* variable) {
-  if (variable_count >= allocated_variables) {
-    allocated_variables *= 2;
-    variables = (Var*)realloc(variables, sizeof(Var) * allocated_variables);
-  }
-
-  variables[variable_count] = *variable;
-  variable_count += 1;
-}
-
-Var* getVariable(char* name) {
+Node* getVariable(char* id) {
   for (int i = 0; i < variable_count; ++i) {
-    if (strcmp(variables[i].name, name) == 0) {
-      return &variables[i];
+    if (strcmp(variables[i].name, id) == 0) {
+      return variables[i].value;
     }
   }
   return NULL;
 }
-
-Value* eval(Node* node) {
-  Value* result = (Value*)malloc(sizeof(Value));
-  if (node->type != EXPRESSION_NODE) {
-    printf("Error: expected 'expression' but got '%s'\n", node->type);
-    return NULL;
+void setVariable(char* id, Node* value) {
+  for (int i = 0; i < variable_count; ++i) {
+    if (strcmp(variables[i].name, id) == 0) {
+      variables[i].value = value;
+      return;
+    }
   }
-  if (node->children_size == 0) {
-    printf("Error: expected expression to have at least 1 argument\n");
-    return NULL;
-  }
-  
-  Node* function = node->children[0];
-  if (function->type != ID_NODE) {
-    printf("Error: invalid function id '%s'\n", function->token);
-    return NULL;
+  if (variable_count >= max_variables) {
+    max_variables *= 2;
+    variables = (Variable*)realloc(variables, sizeof(Variable) * max_variables);
   }
 
-  char* function_name = function->token;
+  variables[variable_count].name = id;
+  variables[variable_count].value = value;
+  variable_count += 1;
+}
+
+Node* eval(Node* node) {
+  Node* result;
+  switch (node->type) {
+    case NUMBER_NODE:
+      return node;
+    case ID_NODE:
+      result = getVariable((char*)node->value);
+      if (result == NULL) {
+        printf("Error: variable '%s' is not defined\n", (char*)node->value);
+      }
+      return result;
+    case QUOTED_EXPRESSION_NODE:
+      node->type = EXPRESSION_NODE;
+      return node;
+    case EXPRESSION_NODE:
+      return evalExpression(node);
+  }
+}
+
+Node* evalExpression(Node* node) {
+  Node* result = (Node*)malloc(sizeof(Node));
+  if (expectExpressionNode(node) != 0 || expectNArguments(node, 1) != 0 || expectIdNode(node->children[0]) != 0) {
+    return NULL;
+  }
+
+  char* function_name = (char*)node->children[0]->value;
   if (strcmp(function_name, "add") == 0) {
     if (expectNArguments(node, 3) != 0) {
       return NULL;
     }
-    Value* value1 = getValueFromNode(node->children[1]);
-    Value* value2 = getValueFromNode(node->children[2]);
-    if (value1 == NULL || value2 == NULL) {
+    double summand = 0;
+    Node* value;
+    for (int i = 1; i < node->children_size; ++i) {
+      value = eval(node->children[i]);
+      if (value == NULL || expectNumberNode(value) != 0) {
+        return NULL;
+      }
+      summand += ((double*)value->value)[0];
+    }
+
+    result->type = NUMBER_NODE;
+    result->value = (double*)malloc(sizeof(double));
+    ((double*)result->value)[0] = summand;
+    result->children = NULL;
+    result->children_size = 0;
+  } else if (strcmp(function_name, "setq") == 0) {
+    if (expectExactlyNArguments(node, 3) != 0) {
+      return NULL;
+    }
+    
+    if (node->children[1]->type != ID_NODE) {
+      printf("Error: expected 'id' but got type %d\n", node->children[1]->type);
       return NULL;
     }
 
-    result->type = NUMBER_VALUE;
-    result->data = malloc(sizeof(double));
-    ((double*)result->data)[0] = ((double*)value1->data)[0] + ((double*)value2->data)[0];
-  } else if (strcmp(function_name, "setq") == 0) {
-    if (expectNArguments(node, 3) != 0) {
-      return NULL;
+    char* id = (char*)node->children[1]->value;
+    result = eval(node->children[2]);
+    if (result != NULL) {
+      setVariable(id, result);
     }
-    if (node->children[1]->type != ID_NODE) {
-      printf("Error: expected identifier but got %d\n", node->children[1]->type);
-      return NULL;
-    }
-    Var* variable = getVariable(node->children[1]->token);
-    Value* value = getValueFromNode(node->children[2]);
-    if (value == NULL) {
-      return NULL;
-    }
-    if (variable == NULL) {
-      variable = (Var*)malloc(sizeof(Var));
-      variable->name = node->children[1]->token;
-      variable->data = value;
-      addVariable(variable);
-    } else {
-      variable->data = value;
-    }
-    result = variable->data;
   } else {
     printf("Error: unknown function '%s'\n", function_name);
     return NULL;

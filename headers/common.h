@@ -17,11 +17,11 @@
 #define EXPRESSION_NODE 2
 #define QUOTED_EXPRESSION_NODE 3
 
-typedef struct _Node {
+typedef struct Node {
   int type;
-  char* token;
-  struct _Node** children;
+  void* value;
   int children_size;
+  struct Node** children;
 } Node;
 
 #endif

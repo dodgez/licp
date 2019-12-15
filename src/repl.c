@@ -9,14 +9,14 @@ void repl(void) {
     getline(&input, &size, stdin);
     node = parseExpression(getStreamFromString(input));
     if (node == NULL) {
-      printf(error_message);
+      printf("%s\n", error_message);
     } else {
-      Value* result = eval(node);
-      if (result == NULL) {
+      node = evalExpression(node);
+      if (node == NULL) {
         continue;
       }
-      if (result->type == NUMBER_VALUE) {
-        printf("%g\n", ((double*)result->data)[0]);
+      if (node->type == NUMBER_NODE) {
+        printf("%g\n", ((double*)node->value)[0]);
       }
     }
   }

@@ -1,9 +1,9 @@
 #include "main.h"
 
 int main(int argc, char** argv) {
-  variables = (Var*)malloc(sizeof(Var) * 1);
+  max_variables = 1;
   variable_count = 0;
-  allocated_variables = 1;
+  variables = (Variable*)malloc(sizeof(Variable) * max_variables);
 
   if (argc > 1) {
     char* line = NULL;
@@ -20,10 +20,9 @@ int main(int argc, char** argv) {
       while ((read = getline(&line, &length, file)) != -1) {
         node = parseExpression(getStreamFromString(line));
         if (node == NULL) {
-          printf(error_message);
+          printf("%s\n", error_message);
         } else {
-          Value* result = eval(node);
-          printf("Variables defined: %d\n", variable_count);
+          evalExpression(node);
         }
       }
       fclose(file);

@@ -27,7 +27,7 @@ BOOL isExpression(Stream* stream) {
 Node* parseExpression(Stream* stream) {
   Node* node = (Node*)malloc(sizeof(Node));
   node->type = EXPRESSION_NODE;
-  node->token = NULL;
+  node->value = NULL;
   node->children_size = 0;
   int max_length = 10;
   node->children = (Node**)malloc(sizeof(Node*) * max_length);
