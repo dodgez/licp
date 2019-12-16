@@ -1,10 +1,10 @@
 #include "error.h"
 
 void throwError(char* type, char* expected, Stream* stream) {
-  error_message = (char*)malloc(sizeof(char) * 255);
+  error_message = (char*)malloc(sizeof(char) * MAX_ERROR_MESSAGE_LENGTH);
   if (getStreamChar(stream) == -1) {
-    sprintf(error_message, "Error while parsing type '%s': expected to find '%s' but found EOF.\n", type, expected);
+    snprintf(error_message, MAX_ERROR_MESSAGE_LENGTH + 1, "Error while parsing type '%s': expected to find '%s' but found EOF.\n", type, expected);
   } else {
-    sprintf(error_message, "Error while parsing type '%s': expected to find '%s' but found '%c'.\n", type, expected, getStreamChar(stream));
+    snprintf(error_message, MAX_ERROR_MESSAGE_LENGTH + 1, "Error while parsing type '%s': expected to find '%s' but found '%c'.\n", type, expected, getStreamChar(stream));
   }
 }
