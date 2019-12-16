@@ -79,6 +79,7 @@ Node* eval(Node* node) {
     case EXPRESSION_NODE:
       return evalExpression(node);
   }
+  return result;
 }
 
 Node* evalExpression(Node* node) {
