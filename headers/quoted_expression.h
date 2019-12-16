@@ -6,9 +6,9 @@
 #include "stream.h"
 #include "expression.h"
 
-BOOL isQuote(Stream* stream);
+BOOL isQuote(Stream *stream);
 
-BOOL isQuotedExpression(Stream* stream);
-Node* parseQuotedExpression(Stream* stream);
+BOOL isQuotedExpression(Stream *stream);
+Node *parseQuotedExpression(Stream *stream);
 
 #endif

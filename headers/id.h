@@ -4,7 +4,7 @@
 #include "common.h"
 #include "stream.h"
 
-BOOL isId(Stream* stream);
-Node* parseId(Stream* stream);
+BOOL isId(Stream *stream);
+Node *parseId(Stream *stream);
 
 #endif

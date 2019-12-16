@@ -4,25 +4,26 @@
 #include "common.h"
 #include "eval.h"
 
-typedef struct Variable {
-  char* name;
-  Node* value;
+typedef struct Variable
+{
+  char *name;
+  Node *value;
 } Variable;
 
-int expectNumberNode(Node* node);
-int expectIdNode(Node* node);
-int expectExpressionNode(Node* node);
+int expectNumberNode(Node *node);
+int expectIdNode(Node *node);
+int expectExpressionNode(Node *node);
 
-int expectNArguments(Node* node, int n);
-int expectExactlyNArguments(Node* node, int n);
+int expectNArguments(Node *node, int n);
+int expectExactlyNArguments(Node *node, int n);
 
-Node* getVariable(char* id);
-void setVariable(char* id, Node* value);
+Node *getVariable(char *id);
+void setVariable(char *id, Node *value);
 
-Node* eval(Node* node);
-Node* evalExpression(Node* node);
+Node *eval(Node *node);
+Node *evalExpression(Node *node);
 
-Variable* variables;
+Variable *variables;
 int variable_count;
 int max_variables;
 

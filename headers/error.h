@@ -6,8 +6,8 @@
 
 #define MAX_ERROR_MESSAGE_LENGTH 255
 
-char* error_message;
+char *error_message;
 
-void throwError(char* type, char* expected, Stream* stream);
+void throwError(char *type, char *expected, Stream *stream);
 
 #endif

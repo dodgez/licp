@@ -4,7 +4,7 @@
 #include "common.h"
 #include "stream.h"
 
-BOOL isNumber(Stream* stream);
-Node* parseNumber(Stream* stream);
+BOOL isNumber(Stream *stream);
+Node *parseNumber(Stream *stream);
 
 #endif

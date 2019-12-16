@@ -10,10 +10,10 @@
 
 BOOL isWhitespace(char c);
 
-BOOL isLParen(Stream* stream);
-BOOL isRParen(Stream* stream);
+BOOL isLParen(Stream *stream);
+BOOL isRParen(Stream *stream);
 
-BOOL isExpression(Stream* stream);
-Node* parseExpression(Stream* stream);
+BOOL isExpression(Stream *stream);
+Node *parseExpression(Stream *stream);
 
 #endif

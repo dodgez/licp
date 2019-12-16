@@ -3,18 +3,19 @@
 
 #include "common.h"
 
-typedef struct _Stream {
-  char* stream;
+typedef struct _Stream
+{
+  char *stream;
   int i;
   int length;
 } Stream;
 
-void advanceStream(Stream* stream);
-void advanceStreamN(Stream* stream, int n);
+void advanceStream(Stream *stream);
+void advanceStreamN(Stream *stream, int n);
 
-char getStreamChar(Stream* stream);
-char getStreamCharIndex(Stream* stream, int i);
+char getStreamChar(Stream *stream);
+char getStreamCharIndex(Stream *stream, int i);
 
-Stream* getStreamFromString(char* string);
+Stream *getStreamFromString(char *string);
 
 #endif

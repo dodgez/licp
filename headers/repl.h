@@ -11,7 +11,7 @@
 
 #define MAX_SPRINTNODE 80
 
-char* sprintNode(Node* node);
+char *sprintNode(Node *node);
 
 void repl(void);
 
