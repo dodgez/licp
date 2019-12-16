@@ -9,7 +9,7 @@
 #include "expression.h"
 #include "eval.h"
 
-#define MAX_SPRINTNODE 80
+#define MAX_SPRINTNODE_LENGTH 80
 
 char *sprintNode(Node *node);
 
