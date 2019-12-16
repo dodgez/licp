@@ -1,7 +1,7 @@
 #include "repl.h"
 
 void repl(void) {
-  Node* node;
+  Node* node = NULL;
   char* input = NULL;
   size_t size = 0;
   while (TRUE) {

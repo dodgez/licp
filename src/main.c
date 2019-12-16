@@ -1,6 +1,7 @@
 #include "main.h"
 
 int main(int argc, char** argv) {
+  error_message = NULL;
   max_variables = 1;
   variable_count = 0;
   variables = (Variable*)malloc(sizeof(Variable) * max_variables);

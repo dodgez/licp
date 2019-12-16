@@ -63,7 +63,7 @@ void setVariable(char* id, Node* value) {
 }
 
 Node* eval(Node* node) {
-  Node* result;
+  Node* result = NULL;
   switch (node->type) {
     case NUMBER_NODE:
       return node;
@@ -93,7 +93,7 @@ Node* evalExpression(Node* node) {
       return NULL;
     }
     double summand = 0;
-    Node* value;
+    Node* value = NULL;
     for (int i = 1; i < node->children_size; ++i) {
       value = eval(node->children[i]);
       if (value == NULL || expectNumberNode(value) != 0) {
