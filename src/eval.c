@@ -133,6 +133,12 @@ Node* evalExpression(Node* node) {
         return NULL;
       }  
     }
+  } else if (strcmp(function_name, "car") == 0) {
+    if (expectExactlyNArguments(node, 2) != 0) {
+      return NULL;
+    }
+
+    result = node->children[1]->children[1];
   } else {
     printf("Error: unknown function '%s'\n", function_name);
     return NULL;
