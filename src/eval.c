@@ -139,6 +139,18 @@ Node* evalExpression(Node* node) {
     }
 
     result = node->children[1]->children[1];
+  } else if (strcmp(function_name, "cdr") == 0) {
+    if (expectExactlyNArguments(node, 2) != 0) {
+      return NULL;
+    }
+
+    result->type = QUOTED_EXPRESSION_NODE;
+    result->value = NULL;
+    result->children_size = node->children[1]->children_size - 2;
+    result->children = (Node**)malloc(sizeof(Node*) * result->children_size);
+    for (int i = 2; i < node->children[1]->children_size; ++i) {
+      result->children[i-2] = node->children[1]->children[i];
+    }
   } else {
     printf("Error: unknown function '%s'\n", function_name);
     return NULL;
