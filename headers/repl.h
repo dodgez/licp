@@ -9,6 +9,10 @@
 #include "expression.h"
 #include "eval.h"
 
+#define MAX_SPRINTNODE 80
+
+char* sprintNode(Node* node);
+
 void repl(void);
 
 #endif

@@ -118,6 +118,21 @@ Node* evalExpression(Node* node) {
     if (result != NULL) {
       setVariable(id, result);
     }
+  } else if (strcmp(function_name, "list") == 0) {
+    if (expectNArguments(node, 1) != 0) {
+      return NULL;
+    }
+
+    result->type = QUOTED_EXPRESSION_NODE;
+    result->value = NULL;
+    result->children_size = node->children_size - 1;
+    result->children = (Node**)malloc(sizeof(Node*) * result->children_size);
+    for (int i = 1; i < node->children_size; ++i) {
+      result->children[i - 1] = eval(node->children[i]);
+      if (result->children[i - 1] == NULL) {
+        return NULL;
+      }  
+    }
   } else {
     printf("Error: unknown function '%s'\n", function_name);
     return NULL;
