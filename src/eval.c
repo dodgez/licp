@@ -27,6 +27,15 @@ int expectExpressionNode(Node *node)
   }
   return 0;
 }
+int expectQuotedNode(Node *node)
+{
+  if (node->type != QUOTED_NODE)
+  {
+    printf("Error: expected type 'quoted' but got type '%d'\n", node->type);
+    return 1;
+  }
+  return 0;
+}
 
 int expectNArguments(Node *node, int n)
 {
@@ -93,9 +102,8 @@ Node *eval(Node *node)
       printf("Error: variable '%s' is not defined\n", (char *)node->value);
     }
     return result;
-  case QUOTED_EXPRESSION_NODE:
-    node->type = EXPRESSION_NODE;
-    return node;
+  case QUOTED_NODE:
+    return (Node*)node->value;
   case EXPRESSION_NODE:
     return evalExpression(node);
   }
@@ -156,14 +164,18 @@ Node *evalExpression(Node *node)
       return NULL;
     }
 
-    result->type = QUOTED_EXPRESSION_NODE;
-    result->value = NULL;
-    result->children_size = node->children_size - 1;
-    result->children = (Node **)malloc(sizeof(Node *) * result->children_size);
+    result->type = QUOTED_NODE;
+    result->value = malloc(sizeof(Node));
+    result->children_size = 0;
+    result->children = NULL;
+    ((Node*)result->value)->type = EXPRESSION_NODE;
+    ((Node*)result->value)->value = NULL;
+    ((Node*)result->value)->children_size = node->children_size - 1;
+    ((Node*)result->value)->children = (Node **)malloc(sizeof(Node *) * ((Node*)result->value)->children_size);
     for (int i = 1; i < node->children_size; ++i)
     {
-      result->children[i - 1] = eval(node->children[i]);
-      if (result->children[i - 1] == NULL)
+      ((Node*)result->value)->children[i - 1] = eval(node->children[i]);
+      if (((Node*)result->value)->children[i - 1] == NULL)
       {
         return NULL;
       }
@@ -176,7 +188,25 @@ Node *evalExpression(Node *node)
       return NULL;
     }
 
-    result = node->children[1]->children[1];
+    if (node->children[1]->type == QUOTED_NODE)
+    {
+      node = node->children[1];
+    }
+    else
+    {
+      node = eval(node->children[1]);
+      if (node == NULL || expectQuotedNode(node) != 0)
+      {
+        return NULL;
+      }
+    }
+
+    node = (Node*)node->value;
+    if (expectExpressionNode(node) != 0 || expectNArguments(node, 1))
+    {
+      return NULL;
+    }
+    result = node->children[0];
   }
   else if (strcmp(function_name, "cdr") == 0)
   {
@@ -185,13 +215,35 @@ Node *evalExpression(Node *node)
       return NULL;
     }
 
-    result->type = QUOTED_EXPRESSION_NODE;
-    result->value = NULL;
-    result->children_size = node->children[1]->children_size - 2;
-    result->children = (Node **)malloc(sizeof(Node *) * result->children_size);
-    for (int i = 2; i < node->children[1]->children_size; ++i)
+    if (node->children[1]->type == QUOTED_NODE)
     {
-      result->children[i - 2] = node->children[1]->children[i];
+      node = node->children[1];
+    }
+    else
+    {
+      node = eval(node->children[1]);
+      if (node == NULL || expectQuotedNode(node) != 0)
+      {
+        return NULL;
+      }
+    }
+
+    node = (Node*)node->value;
+    if (expectExpressionNode(node) != 0 || expectNArguments(node, 1))
+    {
+      return NULL;
+    }
+    result->type = QUOTED_NODE;
+    result->value = malloc(sizeof(Node));
+    result->children_size = 0;
+    result->children = NULL;
+    ((Node*)result->value)->type = EXPRESSION_NODE;
+    ((Node*)result->value)->value = NULL;
+    ((Node*)result->value)->children_size = node->children_size - 1;
+    ((Node*)result->value)->children = (Node **)malloc(sizeof(Node *) * ((Node*)result->value)->children_size);
+    for (int i = 1; i < node->children_size; ++i)
+    {
+      ((Node*)result->value)->children[i - 1] = node->children[i];
     }
   }
   else

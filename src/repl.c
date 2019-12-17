@@ -10,7 +10,12 @@ char *sprintNode(Node *node)
   case NUMBER_NODE:
     snprintf(result, MAX_SPRINTNODE_LENGTH, "%g", ((double *)node->value)[0]);
     break;
-  case QUOTED_EXPRESSION_NODE:
+  case ID_NODE:
+    snprintf(result, MAX_SPRINTNODE_LENGTH, "%s", (char*)node->value);
+    break;
+  case QUOTED_NODE:
+    return sprintNode((Node*)node->value);
+  case EXPRESSION_NODE:
     sprintf(result, "(");
     char *text = NULL;
     int length = 0;
@@ -48,14 +53,14 @@ void repl(void)
   {
     printf(">");
     getline(&input, &size, stdin);
-    node = parseExpression(getStreamFromString(input));
+    node = parseAny(getStreamFromString(input));
     if (node == NULL)
     {
       printf("%s\n", error_message);
     }
     else
     {
-      node = evalExpression(node);
+      node = eval(node);
       if (node != NULL)
       {
         output = sprintNode(node);

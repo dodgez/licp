@@ -4,9 +4,7 @@
 #include "common.h"
 #include "error.h"
 #include "stream.h"
-#include "number.h"
-#include "id.h"
-#include "expression.h"
+#include "parse_any.h"
 #include "eval.h"
 
 #define MAX_SPRINTNODE_LENGTH 80

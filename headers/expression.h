@@ -6,7 +6,7 @@
 #include "stream.h"
 #include "number.h"
 #include "id.h"
-#include "quoted_expression.h"
+#include "quoted.h"
 
 BOOL isWhitespace(char c);
 

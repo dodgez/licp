@@ -15,7 +15,7 @@
 #define NUMBER_NODE 0
 #define ID_NODE 1
 #define EXPRESSION_NODE 2
-#define QUOTED_EXPRESSION_NODE 3
+#define QUOTED_NODE 3
 
 typedef struct Node
 {

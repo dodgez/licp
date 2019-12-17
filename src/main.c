@@ -26,14 +26,14 @@ int main(int argc, char **argv)
 
       while ((read = getline(&line, &length, file)) != -1)
       {
-        node = parseExpression(getStreamFromString(line));
+        node = parseAny(getStreamFromString(line));
         if (node == NULL)
         {
           printf("%s\n", error_message);
         }
         else
         {
-          node = evalExpression(node);
+          node = eval(node);
           if (node != NULL)
           {
             output = sprintNode(node);
