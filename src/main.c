@@ -10,6 +10,7 @@ int main(int argc, char **argv)
   if (argc > 1)
   {
     char *line = NULL;
+    char *output = NULL;
     FILE *file = NULL;
     Node *node = NULL;
     size_t length = 0;
@@ -32,7 +33,15 @@ int main(int argc, char **argv)
         }
         else
         {
-          evalExpression(node);
+          node = evalExpression(node);
+          if (node != NULL)
+          {
+            output = sprintNode(node);
+            if (output != NULL)
+            {
+              printf("%s\n", output);
+            }
+          }
         }
       }
       fclose(file);
