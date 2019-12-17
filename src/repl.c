@@ -11,10 +11,10 @@ char *sprintNode(Node *node)
     snprintf(result, MAX_SPRINTNODE_LENGTH, "%g", ((double *)node->value)[0]);
     break;
   case ID_NODE:
-    snprintf(result, MAX_SPRINTNODE_LENGTH, "%s", (char*)node->value);
+    snprintf(result, MAX_SPRINTNODE_LENGTH, "%s", (char *)node->value);
     break;
   case QUOTED_NODE:
-    return sprintNode((Node*)node->value);
+    return sprintNode((Node *)node->value);
   case EXPRESSION_NODE:
     sprintf(result, "(");
     char *text = NULL;

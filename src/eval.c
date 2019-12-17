@@ -103,7 +103,7 @@ Node *eval(Node *node)
     }
     return result;
   case QUOTED_NODE:
-    return (Node*)node->value;
+    return (Node *)node->value;
   case EXPRESSION_NODE:
     return evalExpression(node);
   }
@@ -176,14 +176,14 @@ Node *evalExpression(Node *node)
     result->value = malloc(sizeof(Node));
     result->children_size = 0;
     result->children = NULL;
-    ((Node*)result->value)->type = EXPRESSION_NODE;
-    ((Node*)result->value)->value = NULL;
-    ((Node*)result->value)->children_size = node->children_size - 1;
-    ((Node*)result->value)->children = (Node **)malloc(sizeof(Node *) * ((Node*)result->value)->children_size);
+    ((Node *)result->value)->type = EXPRESSION_NODE;
+    ((Node *)result->value)->value = NULL;
+    ((Node *)result->value)->children_size = node->children_size - 1;
+    ((Node *)result->value)->children = (Node **)malloc(sizeof(Node *) * ((Node *)result->value)->children_size);
     for (int i = 1; i < node->children_size; ++i)
     {
-      ((Node*)result->value)->children[i - 1] = eval(node->children[i]);
-      if (((Node*)result->value)->children[i - 1] == NULL)
+      ((Node *)result->value)->children[i - 1] = eval(node->children[i]);
+      if (((Node *)result->value)->children[i - 1] == NULL)
       {
         return NULL;
       }
@@ -209,7 +209,7 @@ Node *evalExpression(Node *node)
       }
     }
 
-    node = (Node*)node->value;
+    node = (Node *)node->value;
     if (expectExpressionNode(node) != 0 || expectNArguments(node, 1))
     {
       return NULL;
@@ -236,7 +236,7 @@ Node *evalExpression(Node *node)
       }
     }
 
-    node = (Node*)node->value;
+    node = (Node *)node->value;
     if (expectExpressionNode(node) != 0 || expectNArguments(node, 1))
     {
       return NULL;
@@ -245,13 +245,13 @@ Node *evalExpression(Node *node)
     result->value = malloc(sizeof(Node));
     result->children_size = 0;
     result->children = NULL;
-    ((Node*)result->value)->type = EXPRESSION_NODE;
-    ((Node*)result->value)->value = NULL;
-    ((Node*)result->value)->children_size = node->children_size - 1;
-    ((Node*)result->value)->children = (Node **)malloc(sizeof(Node *) * ((Node*)result->value)->children_size);
+    ((Node *)result->value)->type = EXPRESSION_NODE;
+    ((Node *)result->value)->value = NULL;
+    ((Node *)result->value)->children_size = node->children_size - 1;
+    ((Node *)result->value)->children = (Node **)malloc(sizeof(Node *) * ((Node *)result->value)->children_size);
     for (int i = 1; i < node->children_size; ++i)
     {
-      ((Node*)result->value)->children[i - 1] = node->children[i];
+      ((Node *)result->value)->children[i - 1] = node->children[i];
     }
   }
   else if (strcmp(function_name, "lambda") == 0)
@@ -284,7 +284,7 @@ Node *evalFunction(Node *node, Node *function)
   {
     return NULL;
   }
-  if (strcmp((char*)function->children[0]->value, "lambda") != 0)
+  if (strcmp((char *)function->children[0]->value, "lambda") != 0)
   {
     printf("Error: expected function definition but got '%s'\n", function->children[0]->value);
     return NULL;
@@ -306,12 +306,12 @@ Node *evalFunction(Node *node, Node *function)
     {
       return NULL;
     }
-    setVariable((char*)child->value, eval(node->children[i+1]));
+    setVariable((char *)child->value, eval(node->children[i + 1]));
   }
   for (int i = 2; i < function->children_size; ++i)
   {
     result = eval(function->children[i]);
   }
-  
+
   return result;
 }
