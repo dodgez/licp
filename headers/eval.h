@@ -2,7 +2,6 @@
 #define eval_h
 
 #include "common.h"
-#include "eval.h"
 
 typedef struct Variable
 {
