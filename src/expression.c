@@ -56,13 +56,13 @@ Node *parseExpression(Stream *stream)
     {
       node->children[node->children_size] = parseId(stream);
     }
-    else if (isQuotedExpression(stream))
-    {
-      node->children[node->children_size] = parseQuotedExpression(stream);
-    }
     else if (isExpression(stream))
     {
       node->children[node->children_size] = parseExpression(stream);
+    }
+    else if (isQuotedExpression(stream))
+    {
+      node->children[node->children_size] = parseQuotedExpression(stream);
     }
     else if (isWhitespace(getStreamChar(stream)))
     {
@@ -71,7 +71,7 @@ Node *parseExpression(Stream *stream)
     }
     else
     {
-      throwError("expression", "number", stream);
+      throwError("expression", "number or id or expression or quoted expression or whitespace", stream);
       return NULL;
     }
 
