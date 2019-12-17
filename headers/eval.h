@@ -21,6 +21,7 @@ void setVariable(char *id, Node *value);
 
 Node *eval(Node *node);
 Node *evalExpression(Node *node);
+Node *evalFunction(Node *node, Node *function);
 
 Variable *variables;
 int variable_count;

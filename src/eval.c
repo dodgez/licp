@@ -113,7 +113,15 @@ Node *eval(Node *node)
 Node *evalExpression(Node *node)
 {
   Node *result = (Node *)malloc(sizeof(Node));
-  if (expectExpressionNode(node) != 0 || expectNArguments(node, 1) != 0 || expectIdNode(node->children[0]) != 0)
+  if (expectExpressionNode(node) != 0 || expectNArguments(node, 1) != 0)
+  {
+    return NULL;
+  }
+  if (node->children[0]->type == EXPRESSION_NODE)
+  {
+    return evalFunction(node, node->children[0]);
+  }
+  if (expectIdNode(node->children[0]) != 0)
   {
     return NULL;
   }
@@ -246,11 +254,64 @@ Node *evalExpression(Node *node)
       ((Node*)result->value)->children[i - 1] = node->children[i];
     }
   }
+  else if (strcmp(function_name, "lambda") == 0)
+  {
+    return node;
+  }
   else
   {
-    printf("Error: unknown function '%s'\n", function_name);
+    Node *function = getVariable(function_name);
+    if (function == NULL)
+    {
+      printf("Error: unknown function '%s'\n", function_name);
+      return NULL;
+    }
+    result = evalFunction(node, function);
+  }
+
+  return result;
+}
+
+Node *evalFunction(Node *node, Node *function)
+{
+  Node *result = NULL;
+
+  if (expectExpressionNode(function) != 0 || expectNArguments(function, 3) != 0)
+  {
+    return NULL;
+  }
+  if (expectIdNode(function->children[0]) != 0)
+  {
+    return NULL;
+  }
+  if (strcmp((char*)function->children[0]->value, "lambda") != 0)
+  {
+    printf("Error: expected function definition but got '%s'\n", function->children[0]->value);
+    return NULL;
+  }
+  if (expectExpressionNode(function->children[1]) != 0)
+  {
+    return NULL;
+  }
+  if (node->children_size - 1 != function->children[1]->children_size)
+  {
+    printf("Error: function requires %d arguments but got %d\n", function->children[1]->children_size, node->children_size - 1);
     return NULL;
   }
 
+  for (int i = 0; i < function->children[1]->children_size; ++i)
+  {
+    Node *child = function->children[1]->children[i];
+    if (expectIdNode(child) != 0)
+    {
+      return NULL;
+    }
+    setVariable((char*)child->value, eval(node->children[i+1]));
+  }
+  for (int i = 2; i < function->children_size; ++i)
+  {
+    result = eval(function->children[i]);
+  }
+  
   return result;
 }
