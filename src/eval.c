@@ -58,34 +58,48 @@ int expectExactlyNArguments(Node *node, int n)
 
 Node *getVariable(char *id)
 {
-  for (int i = 0; i < variable_count; ++i)
+  Variable *current = variables;
+  while (current != NULL)
   {
-    if (strcmp(variables[i].name, id) == 0)
+    if (strcmp(current->name, id) == 0)
     {
-      return variables[i].value;
+      return current->value;
     }
+    current = current->next;
   }
   return NULL;
 }
 void setVariable(char *id, Node *value)
 {
-  for (int i = 0; i < variable_count; ++i)
+  Variable *current = variables;
+  if (current == NULL)
   {
-    if (strcmp(variables[i].name, id) == 0)
+    variables = (Variable *)malloc(sizeof(Variable));
+    variables->name = id;
+    variables->value = value;
+    variables->backup = NULL;
+    variables->next = NULL;
+    return;
+  }
+  if (strcmp(current->name, id) == 0)
+  {
+    current->value = value;
+    return;
+  }
+  while (current->next != NULL)
+  {
+    if (strcmp(current->name, id) == 0)
     {
-      variables[i].value = value;
+      current->value = value;
       return;
     }
+    current = current->next;
   }
-  if (variable_count >= max_variables)
-  {
-    max_variables *= 2;
-    variables = (Variable *)realloc(variables, sizeof(Variable) * max_variables);
-  }
-
-  variables[variable_count].name = id;
-  variables[variable_count].value = value;
-  variable_count += 1;
+  current->next = (Variable *)malloc(sizeof(Variable));
+  current->next->name = id;
+  current->next->value = value;
+  current->next->backup = NULL;
+  current->next->next = NULL;
 }
 
 Node *eval(Node *node)

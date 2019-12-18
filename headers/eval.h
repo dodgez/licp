@@ -7,6 +7,8 @@ typedef struct Variable
 {
   char *name;
   Node *value;
+  struct Variable *next;
+  struct Variable *backup;
 } Variable;
 
 int expectNumberNode(Node *node);
@@ -24,7 +26,5 @@ Node *evalExpression(Node *node);
 Node *evalFunction(Node *node, Node *function);
 
 Variable *variables;
-int variable_count;
-int max_variables;
 
 #endif
