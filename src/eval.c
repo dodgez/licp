@@ -286,7 +286,7 @@ Node *evalFunction(Node *node, Node *function)
   }
   if (strcmp((char *)function->children[0]->value, "lambda") != 0)
   {
-    printf("Error: expected function definition but got '%s'\n", function->children[0]->value);
+    printf("Error: expected function definition but got '%s'\n", (char*)function->children[0]->value);
     return NULL;
   }
   if (expectExpressionNode(function->children[1]) != 0)
