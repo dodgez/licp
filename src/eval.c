@@ -69,8 +69,9 @@ Node *getVariable(char *id)
   }
   return NULL;
 }
-void setVariable(char *id, Node *value)
+void setVariable(char *id, Node *value, BOOL backup)
 {
+  Node *old = NULL;
   Variable *current = variables;
   if (current == NULL)
   {
@@ -83,14 +84,40 @@ void setVariable(char *id, Node *value)
   }
   if (strcmp(current->name, id) == 0)
   {
-    current->value = value;
+    if (backup == TRUE)
+    {
+      old = current->value;
+      current->backup = (Variable *)malloc(sizeof(Variable));
+      current->backup->name = id;
+      current->backup->value = old;
+      current->backup->next = current->next;
+      current->backup->backup = NULL;
+      current->value = value;
+    }
+    else
+    {
+      current->value = value;
+    }
     return;
   }
   while (current->next != NULL)
   {
     if (strcmp(current->name, id) == 0)
     {
-      current->value = value;
+      if (backup == TRUE)
+      {
+        old = current->value;
+        current->backup = (Variable *)malloc(sizeof(Variable));
+        current->backup->name = id;
+        current->backup->value = old;
+        current->backup->next = current->next;
+        current->backup->backup = NULL;
+        current->value = value;
+      }
+      else
+      {
+        current->value = value;
+      }
       return;
     }
     current = current->next;
@@ -100,6 +127,26 @@ void setVariable(char *id, Node *value)
   current->next->value = value;
   current->next->backup = NULL;
   current->next->next = NULL;
+}
+void removeVariable(char *id)
+{
+  Variable *current = variables;
+  while (current != NULL)
+  {
+    if (strcmp(current->name, id) == 0)
+    {
+      if (current->backup != NULL)
+      {
+        current->value = current->backup->value;
+        current->backup = current->backup->backup;
+      }
+      else
+      {
+        variables = current->next;
+      }
+    }
+    current = current->next;
+  }
 }
 
 Node *eval(Node *node)
@@ -176,7 +223,7 @@ Node *evalExpression(Node *node)
     result = eval(node->children[2]);
     if (result != NULL)
     {
-      setVariable(id, result);
+      setVariable(id, result, FALSE);
     }
   }
   else if (strcmp(function_name, "list") == 0)
@@ -320,11 +367,16 @@ Node *evalFunction(Node *node, Node *function)
     {
       return NULL;
     }
-    setVariable((char *)child->value, eval(node->children[i + 1]));
+    setVariable((char *)child->value, eval(node->children[i + 1]), TRUE);
   }
   for (int i = 2; i < function->children_size; ++i)
   {
     result = eval(function->children[i]);
+  }
+  for (int i = 0; i < function->children[1]->children_size; ++i)
+  {
+    Node *child = function->children[1]->children[i];
+    removeVariable((char *)child->value);
   }
 
   return result;
