@@ -13,9 +13,10 @@
 #define FALSE 0
 
 #define NUMBER_NODE 0
-#define ID_NODE 1
-#define EXPRESSION_NODE 2
-#define QUOTED_NODE 3
+#define BOOLEAN_NODE 1
+#define ID_NODE 2
+#define EXPRESSION_NODE 3
+#define QUOTED_NODE 4
 
 typedef struct Node
 {

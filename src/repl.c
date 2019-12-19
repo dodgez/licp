@@ -10,6 +10,9 @@ char *sprintNode(Node *node)
   case NUMBER_NODE:
     snprintf(result, MAX_SPRINTNODE_LENGTH, "%g", ((double *)node->value)[0]);
     break;
+  case BOOLEAN_NODE:
+    snprintf(result, MAX_SPRINTNODE_LENGTH, "%s", ((int *)node->value)[0] == 1 ? "true" : "false");
+    break;
   case ID_NODE:
     snprintf(result, MAX_SPRINTNODE_LENGTH, "%s", (char *)node->value);
     break;
