@@ -19,7 +19,8 @@ int expectNArguments(Node *node, int n);
 int expectExactlyNArguments(Node *node, int n);
 
 Node *getVariable(char *id);
-void setVariable(char *id, Node *value);
+void setVariable(char *id, Node *value, BOOL backup);
+void removeVariable(char *id);
 
 Node *eval(Node *node);
 Node *evalExpression(Node *node);
