@@ -14,14 +14,14 @@ Node *parseId(Stream *stream)
   }
 
   Node *node = (Node *)malloc(sizeof(Node));
-  if (i >= 4 && strncmp(stream->stream + sizeof(char) * i, "true", 4) == 0)
+  if (i >= 4 && strncmp(stream->stream + sizeof(char) * stream->i, "true", 4) == 0)
   {
     i = 4;
     node->type = BOOLEAN_NODE;
     node->value = (int *)malloc(sizeof(int));
     ((int *)node->value)[0] = 1;
   }
-  else if (i >= 5 && strncmp(stream->stream + sizeof(char) * i, "false", 5) == 0)
+  else if (i >= 5 && strncmp(stream->stream + sizeof(char) * stream->i, "false", 5) == 0)
   {
     i = 5;
     node->type = BOOLEAN_NODE;
