@@ -518,6 +518,52 @@ Node *evalExpression(Node *node)
     result->value = (int *)malloc(sizeof(int));
     ((int *)result->value)[0] = comparator;
   }
+  else if (strcmp(function_name, "not") == 0)
+  {
+    if (expectNArguments(node, 2) != 0)
+    {
+      return NULL;
+    }
+    Node *comparison = eval(node->children[1]);
+    if (expectBooleanNode(comparison) != 0)
+    {
+      return NULL;
+    }
+    result = (Node *)malloc(sizeof(Node));
+    result->type = BOOLEAN_NODE;
+    result->children_size = 0;
+    result->children = NULL;
+    result->value = (int *)malloc(sizeof(int));
+    ((int *)result->value)[0] = 1 - ((int *)comparison->value)[0];
+  }
+  else if (strcmp(function_name, "if") == 0)
+  {
+    if (expectNArguments(node, 3) != 0)
+    {
+      return NULL;
+    }
+    Node *boolean = eval(node->children[1]);
+    if (expectBooleanNode(boolean) != 0)
+    {
+      return NULL;
+    }
+    if (((int *)boolean->value)[0] == 1)
+    {
+      result = eval(node->children[2]);
+    }
+    else
+    {
+      if (node->children_size >= 4)
+      {
+        result = eval(node->children[3]);
+      }
+      else
+      {
+        result = NULL;
+      }
+    }
+    
+  }
   else
   {
     Node *function = getVariable(function_name);

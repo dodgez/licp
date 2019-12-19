@@ -2,6 +2,10 @@
 
 char *sprintNode(Node *node)
 {
+  if (node == NULL)
+  {
+    return "nil";
+  }
   char *result = (char *)malloc(sizeof(char) * MAX_SPRINTNODE_LENGTH);
   memset(result, 0, sizeof(char) * MAX_SPRINTNODE_LENGTH);
   int index = 1;
@@ -64,13 +68,10 @@ void repl(void)
     else
     {
       node = eval(node);
-      if (node != NULL)
+      output = sprintNode(node);
+      if (output != NULL)
       {
-        output = sprintNode(node);
-        if (output != NULL)
-        {
-          printf("%s\n", output);
-        }
+        printf("%s\n", output);
       }
     }
   }
