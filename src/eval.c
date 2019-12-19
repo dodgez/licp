@@ -1,10 +1,28 @@
 #include "eval.h"
 
+char *getTypeName(int node_type)
+{
+  switch (node_type)
+  {
+    case NUMBER_NODE:
+      return "number";
+    case BOOLEAN_NODE:
+      return "boolean";
+    case ID_NODE:
+      return "id";
+    case QUOTED_NODE:
+      return "quoted";
+    case EXPRESSION_NODE:
+      return "expression";
+  }
+  return NULL;
+}
+
 int expectNumberNode(Node *node)
 {
   if (node->type != NUMBER_NODE)
   {
-    printf("Error: expected type 'number' but got type '%d'\n", node->type);
+    printf("Error: expected type 'number' but got type '%s'\n", getTypeName(node->type));
     return 1;
   }
   return 0;
@@ -13,7 +31,7 @@ int expectIdNode(Node *node)
 {
   if (node->type != ID_NODE)
   {
-    printf("Error: expected type 'id' but got type '%d'\n", node->type);
+    printf("Error: expected type 'id' but got type '%s'\n", getTypeName(node->type));
     return 1;
   }
   return 0;
@@ -22,7 +40,7 @@ int expectExpressionNode(Node *node)
 {
   if (node->type != EXPRESSION_NODE)
   {
-    printf("Error: expected type 'expression' but got type '%d'\n", node->type);
+    printf("Error: expected type 'expression' but got type '%s'\n", getTypeName(node->type));
     return 1;
   }
   return 0;
@@ -31,7 +49,7 @@ int expectQuotedNode(Node *node)
 {
   if (node->type != QUOTED_NODE)
   {
-    printf("Error: expected type 'quoted' but got type '%d'\n", node->type);
+    printf("Error: expected type 'quoted' but got type '%s'\n", getTypeName(node->type));
     return 1;
   }
   return 0;

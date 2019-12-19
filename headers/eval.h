@@ -11,6 +11,8 @@ typedef struct Variable
   struct Variable *backup;
 } Variable;
 
+char *getTypeName(int node_type);
+
 int expectNumberNode(Node *node);
 int expectIdNode(Node *node);
 int expectExpressionNode(Node *node);
