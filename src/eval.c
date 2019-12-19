@@ -27,6 +27,15 @@ int expectNumberNode(Node *node)
   }
   return 0;
 }
+int expectBooleanNode(Node *node)
+{
+  if (node->type != BOOLEAN_NODE)
+  {
+    printf("Error: expected type 'boolean' but got type '%s'\n", getTypeName(node->type));
+    return 1;
+  }
+  return 0;
+}
 int expectIdNode(Node *node)
 {
   if (node->type != ID_NODE)
@@ -338,6 +347,176 @@ Node *evalExpression(Node *node)
   else if (strcmp(function_name, "lambda") == 0)
   {
     return node;
+  }
+  else if (strcmp(function_name, "lt") == 0)
+  {
+    if (expectNArguments(node, 3) != 0)
+    {
+      return NULL;
+    }
+    int comparator = 1;
+    Node *comparison = eval(node->children[1]);
+    if (expectNumberNode(comparison) != 0)
+    {
+      return NULL;
+    }
+    for (int i = 2; i < node->children_size; ++i)
+    {
+      Node *other = eval(node->children[i]);
+      if (expectNumberNode(comparison) != 0)
+      {
+        return NULL;
+      }
+      if (((double*)comparison->value)[0] >= ((double*)other->value)[0])
+      {
+        comparator = 0;
+        break;
+      }
+
+      comparison = other;
+    }
+    result = (Node *)malloc(sizeof(Node));
+    result->type = BOOLEAN_NODE;
+    result->children_size = 0;
+    result->children = NULL;
+    result->value = (int *)malloc(sizeof(int));
+    ((int *)result->value)[0] = comparator;
+  }
+  else if (strcmp(function_name, "gt") == 0)
+  {
+    if (expectNArguments(node, 3) != 0)
+    {
+      return NULL;
+    }
+    int comparator = 1;
+    Node *comparison = eval(node->children[1]);
+    if (expectNumberNode(comparison) != 0)
+    {
+      return NULL;
+    }
+    for (int i = 2; i < node->children_size; ++i)
+    {
+      Node *other = eval(node->children[i]);
+      if (expectNumberNode(comparison) != 0)
+      {
+        return NULL;
+      }
+      if (((double*)comparison->value)[0] <= ((double*)other->value)[0])
+      {
+        comparator = 0;
+        break;
+      }
+
+      comparison = other;
+    }
+    result = (Node *)malloc(sizeof(Node));
+    result->type = BOOLEAN_NODE;
+    result->children_size = 0;
+    result->children = NULL;
+    result->value = (int *)malloc(sizeof(int));
+    ((int *)result->value)[0] = comparator;
+  }
+  else if (strcmp(function_name, "eq") == 0)
+  {
+    if (expectNArguments(node, 3) != 0)
+    {
+      return NULL;
+    }
+    int comparator = 1;
+    Node *comparison = eval(node->children[1]);
+    if (expectNumberNode(comparison) != 0)
+    {
+      return NULL;
+    }
+    for (int i = 2; i < node->children_size; ++i)
+    {
+      Node *other = eval(node->children[i]);
+      if (expectNumberNode(comparison) != 0)
+      {
+        return NULL;
+      }
+      if (((double*)comparison->value)[0] != ((double*)other->value)[0])
+      {
+        comparator = 0;
+        break;
+      }
+
+      comparison = other;
+    }
+    result = (Node *)malloc(sizeof(Node));
+    result->type = BOOLEAN_NODE;
+    result->children_size = 0;
+    result->children = NULL;
+    result->value = (int *)malloc(sizeof(int));
+    ((int *)result->value)[0] = comparator;
+  }
+  else if (strcmp(function_name, "and") == 0)
+  {
+    if (expectNArguments(node, 3) != 0)
+    {
+      return NULL;
+    }
+    int comparator = 1;
+    Node *comparison = eval(node->children[1]);
+    if (expectBooleanNode(comparison) != 0)
+    {
+      return NULL;
+    }
+    for (int i = 2; i < node->children_size; ++i)
+    {
+      Node *other = eval(node->children[i]);
+      if (expectBooleanNode(comparison) != 0)
+      {
+        return NULL;
+      }
+      if (((int*)comparison->value)[0] != 1 || ((int*)other->value)[0] != 1)
+      {
+        comparator = 0;
+        break;
+      }
+
+      comparison = other;
+    }
+    result = (Node *)malloc(sizeof(Node));
+    result->type = BOOLEAN_NODE;
+    result->children_size = 0;
+    result->children = NULL;
+    result->value = (int *)malloc(sizeof(int));
+    ((int *)result->value)[0] = comparator;
+  }
+  else if (strcmp(function_name, "or") == 0)
+  {
+    if (expectNArguments(node, 3) != 0)
+    {
+      return NULL;
+    }
+    int comparator = 1;
+    Node *comparison = eval(node->children[1]);
+    if (expectBooleanNode(comparison) != 0)
+    {
+      return NULL;
+    }
+    for (int i = 2; i < node->children_size; ++i)
+    {
+      Node *other = eval(node->children[i]);
+      if (expectBooleanNode(comparison) != 0)
+      {
+        return NULL;
+      }
+      if (((int*)comparison->value)[0] != 1 && ((int*)other->value)[0] != 1)
+      {
+        comparator = 0;
+        break;
+      }
+
+      comparison = other;
+    }
+    result = (Node *)malloc(sizeof(Node));
+    result->type = BOOLEAN_NODE;
+    result->children_size = 0;
+    result->children = NULL;
+    result->value = (int *)malloc(sizeof(int));
+    ((int *)result->value)[0] = comparator;
   }
   else
   {
