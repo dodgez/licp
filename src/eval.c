@@ -174,6 +174,8 @@ Node *eval(Node *node)
   {
   case NUMBER_NODE:
     return node;
+  case BOOLEAN_NODE:
+    return node;
   case ID_NODE:
     result = getVariable((char *)node->value);
     if (result == NULL)
